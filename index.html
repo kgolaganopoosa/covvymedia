@@ -4,80 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Covvy Media | Global Directory</title>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"Covvy Media","short_name":"Covvy","start_url":"/","display":"standalone","background_color":"#1a73e8","theme_color":"#1a73e8","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a73e8%22/%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22white%22/%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root {
-            /* Google-inspired palette */
-            --bg: #ffffff;
-            --card-bg: #f8f9fa;
-            --text-main: #202124;
-            --accent-1: #1a73e8; /* Google Blue */
-            --border: #dadce0;
-            --font: 'Segoe UI', Tahoma, sans-serif;
-        }
-
-        body { font-family: var(--font); background: var(--bg); color: var(--text-main); margin: 0; }
+        :root { --bg: #ffffff; --text-main: #202124; --accent-1: #1a73e8; --border: #dadce0; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; }
         
-        header { padding: 3rem 1rem; text-align: center; border-bottom: 1px solid var(--border); }
-        header h1 { font-size: 2.5rem; color: #5f6368; font-weight: 400; margin-bottom: 0.5rem; }
-        header p { color: #70757a; }
-
-        .search-container { padding: 2rem; display: flex; justify-content: center; }
-        #searchBar { 
-            background: #f1f3f4; 
-            border: 1px solid transparent; 
-            padding: 15px 25px; 
-            width: 100%; 
-            max-width: 600px; 
-            border-radius: 50px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-        #searchBar:focus { background: white; border-color: var(--accent-1); outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-
-        #platform-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 16px; 
-            padding: 2rem; 
-            max-width: 1000px; 
-            margin: auto; 
-        }
+        nav { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        nav h2 { font-weight: 900; margin: 0; font-size: 1.8rem; }
         
-        .platform-card { 
-            background: var(--card-bg); 
-            padding: 24px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border);
-            transition: 0.2s;
-        }
-        .platform-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #d1d5db; }
+        /* Install Button Style */
+        #install-btn { background: var(--accent-1); color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: none; font-weight: bold; }
         
-        .platform-card h3 { margin-top: 0; }
-        .platform-card a { color: var(--accent-1); text-decoration: none; font-weight: 500; display: block; margin-bottom: 15px; }
+        .hero { padding: 1.5rem 2rem; }
+        .search-container { padding: 1rem; position: sticky; top: 0; background: rgba(255, 255, 255, 0.95); z-index: 100; border-bottom: 1px solid var(--border); }
+        #searchBar { background: #f1f3f4; border: 1px solid transparent; padding: 12px 20px; width: 100%; max-width: 600px; margin: 0 auto; display: block; border-radius: 50px; outline: none; font-size: 16px; }
         
-        .fav-btn { 
-            cursor: pointer; 
-            background: white; 
-            border: 1px solid var(--border); 
-            color: #5f6368; 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            font-size: 0.9rem;
-            transition: 0.2s;
-        }
-        .fav-btn:hover { background: #f1f3f4; }
-        .fav-btn.active { background: #e8f0fe; color: var(--accent-1); border-color: transparent; }
+        #platform-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 1rem; max-width: 800px; margin: auto; }
+        .platform-card { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        
+        footer { padding: 2rem; text-align: center; font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+        footer a { color: var(--accent-1); cursor: pointer; text-decoration: underline; margin: 0 10px; }
 
-        footer { padding: 3rem; text-align: center; font-size: 0.8rem; color: #70757a; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: white; margin: 10% auto; padding: 2rem; width: 90%; max-width: 600px; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
+        .close-btn { float: right; cursor: pointer; font-size: 1.5rem; }
+
+        @media (max-width: 480px) { #platform-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Covvy Media</h1>
-        <p>The clean hub for your digital world.</p>
-    </header>
+    <nav>
+        <h2>Covvy Media</h2>
+        <button id="install-btn">Install App</button>
+    </nav>
+    
+    <div class="hero">
+        <p><strong>Your social media apps, in one place!</strong></p>
+    </div>
 
     <div class="search-container">
         <input type="text" id="searchBar" placeholder="Search platforms..." onkeyup="filterPlatforms()">
@@ -86,50 +54,56 @@
     <main id="platform-container"></main>
 
     <footer>
-        <div style="max-width: 600px; margin: auto;">
-            <p><strong>Privacy:</strong> We use local storage. No data leaves your browser.</p>
-            <p>&copy; 2026 Covvy Media.</p>
-        </div>
+        <a onclick="openModal('privacy')">Privacy Policy</a> | 
+        <a onclick="openModal('terms')">Terms of Use</a>
+        <p>&copy; 2026 Covvy Media.</p>
     </footer>
 
+    <div id="modal" class="modal"><div class="modal-content"><span class="close-btn" onclick="closeModal()">&times;</span><div id="modal-body"></div></div></div>
+
     <script>
-        const platforms = [
-            { name: "Facebook", link: "https://facebook.com" },
-            { name: "Instagram", link: "https://instagram.com" },
-            { name: "WhatsApp", link: "https://wa.me/27824598656" },
-            { name: "YouTube", link: "https://youtube.com" },
-            { name: "TikTok", link: "https://tiktok.com" },
-            { name: "X (Twitter)", link: "https://x.com" },
-            { name: "LinkedIn", link: "https://linkedin.com" },
-            { name: "Pinterest", link: "https://pinterest.com" }
-        ];
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        installBtn.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
+
+        function openModal(type) {
+            const content = {
+                privacy: "<h3>Privacy Policy</h3><p>We do not collect personal data.</p>",
+                terms: "<h3>Terms of Use</h3><p>This is a directory for your convenience.</p>"
+            };
+            document.getElementById('modal-body').innerHTML = content[type];
+            document.getElementById('modal').style.display = "block";
+        }
+        function closeModal() { document.getElementById('modal').style.display = "none"; }
+        
+        const platforms = [{ name: "Facebook", link: "https://facebook.com", icon: "fa-brands fa-facebook", color: "#1877F2" }, { name: "Instagram", link: "https://instagram.com", icon: "fa-brands fa-instagram", color: "#E1306C" }, { name: "WhatsApp", link: "https://wa.me/27824598656", icon: "fa-brands fa-whatsapp", color: "#25D366" }, { name: "YouTube", link: "https://youtube.com", icon: "fa-brands fa-youtube", color: "#FF0000" }, { name: "TikTok", link: "https://tiktok.com", icon: "fa-brands fa-tiktok", color: "#000000" }, { name: "X", link: "https://x.com", icon: "fa-brands fa-x-twitter", color: "#000000" }];
 
         function renderPlatforms(filter = "") {
             const container = document.getElementById('platform-container');
-            const favs = JSON.parse(localStorage.getItem('covvy_favs')) || [];
-            const filtered = platforms.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
-            
-            container.innerHTML = filtered.map(p => `
-                <div class="platform-card">
-                    <h3>${p.name}</h3>
-                    <a href="${p.link}" target="_blank">Launch App &rarr;</a>
-                    <button class="fav-btn ${favs.includes(p.name) ? 'active' : ''}" onclick="toggleFav('${p.name}')">
-                        ${favs.includes(p.name) ? 'Favorited' : 'Add to Favorites'}
-                    </button>
-                </div>
-            `).join('');
+            container.innerHTML = platforms.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).map(p => `
+                <a href="${p.link}" target="_blank" class="platform-card">
+                    <div style="color:${p.color}; font-size:20px"><i class="${p.icon}"></i></div>
+                    <div><strong>${p.name}</strong><br><small style="color:var(--accent-1)">Launch &rarr;</small></div>
+                </a>`).join('');
         }
-
         function filterPlatforms() { renderPlatforms(document.getElementById('searchBar').value); }
-
-        function toggleFav(name) {
-            let favs = JSON.parse(localStorage.getItem('covvy_favs')) || [];
-            if (favs.includes(name)) favs = favs.filter(i => i !== name);
-            else favs.push(name);
-            localStorage.setItem('covvy_favs', JSON.stringify(favs));
-            renderPlatforms(document.getElementById('searchBar').value);
-        }
-
         renderPlatforms();
     </script>
 </body>
