@@ -3,51 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Covvy Media | Your Social World</title>
+    <title>Covvy Media | Digital Directory</title>
     <style>
-        /* Modern Youthful CSS */
+        /* Theme inspired by clean, dark-mode minimalist design */
         :root {
-            --primary: #6366f1;
-            --accent: #f43f5e;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
+            --bg: #0a0a0a;
+            --card-bg: #161616;
+            --text-main: #ededed;
+            --text-dim: #a0a0a0;
+            --accent: #ffffff;
+            --border: #333333;
         }
 
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.6; }
-        header { padding: 4rem 1rem; text-align: center; background: linear-gradient(135deg, var(--primary), var(--accent)); }
-        header h1 { font-size: 3rem; margin: 0; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; }
         
-        #platform-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 2rem; max-width: 1200px; margin: auto; }
-        
-        .platform-card { background: var(--card); padding: 1.5rem; border-radius: 1rem; text-align: center; transition: 0.3s; border: 1px solid #334155; }
-        .platform-card:hover { transform: translateY(-8px); border-color: var(--primary); }
-        .platform-card a { display: block; color: var(--primary); text-decoration: none; font-weight: bold; margin: 10px 0; }
-        
-        .fav-btn { cursor: pointer; padding: 8px 16px; border-radius: 20px; border: none; background: #334155; color: white; transition: 0.2s; }
-        .fav-btn.active { background: var(--accent); }
+        header { padding: 4rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+        header h1 { font-size: 2.5rem; letter-spacing: -0.05em; margin: 0; }
+        header p { color: var(--text-dim); }
 
-        footer { text-align: center; padding: 3rem; font-size: 0.9rem; border-top: 1px solid #1e293b; margin-top: 2rem; }
-        footer a { color: #94a3b8; text-decoration: none; margin: 0 10px; }
-        footer a:hover { color: var(--text); }
+        .search-container { text-align: center; padding: 2rem; }
+        #searchBar { background: var(--card-bg); border: 1px solid var(--border); padding: 12px 20px; color: white; width: 100%; max-width: 500px; border-radius: 8px; }
+
+        #platform-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 2rem; max-width: 1200px; margin: auto; }
+        
+        .platform-card { background: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border); transition: 0.3s; }
+        .platform-card:hover { border-color: var(--accent); }
+        .platform-card h3 { margin-top: 0; }
+        .platform-card a { color: var(--accent); text-decoration: none; display: block; margin: 10px 0; font-weight: 500; }
+        
+        .fav-btn { cursor: pointer; background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; }
+        .fav-btn.active { border-color: var(--accent); color: var(--accent); }
+
+        footer { padding: 4rem 2rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; text-align: center; }
+        .legal { max-width: 600px; margin: 0 auto; }
+        .legal h4 { color: var(--text-main); text-transform: uppercase; letter-spacing: 0.1em; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Covvy Media</h1>
-        <p>Explore the world's most popular platforms in one place.</p>
+        <p>A curated directory of global digital platforms.</p>
     </header>
+
+    <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Search platforms..." onkeyup="filterPlatforms()">
+    </div>
 
     <main id="platform-container"></main>
 
     <footer>
-        <div>
-            <a href="#">Privacy Policy</a> | 
-            <a href="#">Terms of Use</a> | 
-            <a href="#">Terms & Conditions</a>
+        <div class="legal">
+            <h4>Legal Disclosures</h4>
+            <p><strong>Privacy Policy:</strong> We prioritize user data minimization. No personal analytics are tracked; your 'favorites' are stored locally on your device only.</p>
+            <p><strong>Terms of Use:</strong> This site serves as a resource directory. We claim no ownership over the third-party platforms listed.</p>
+            <p><strong>Terms and Conditions:</strong> Access is provided as-is. By using this service, you acknowledge that links are maintained for convenience and may change without notice.</p>
+            <p>&copy; 2026 Covvy Media.</p>
         </div>
-        <p>&copy; 2026 Covvy Media. Built for the connected generation.</p>
     </footer>
 
     <script>
@@ -57,37 +69,37 @@
             { name: "WhatsApp", link: "https://web.whatsapp.com" },
             { name: "Instagram", link: "https://instagram.com" },
             { name: "TikTok", link: "https://tiktok.com" },
-            { name: "Snapchat", link: "https://snapchat.com" },
             { name: "X (Twitter)", link: "https://x.com" },
-            { name: "Pinterest", link: "https://pinterest.com" },
-            { name: "Reddit", link: "https://reddit.com" },
             { name: "LinkedIn", link: "https://linkedin.com" }
         ];
 
         const container = document.getElementById('platform-container');
 
-        function renderPlatforms() {
+        function renderPlatforms(filter = "") {
             const favs = JSON.parse(localStorage.getItem('covvy_favs')) || [];
-            container.innerHTML = platforms.map(p => `
+            const filtered = platforms.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+            
+            container.innerHTML = filtered.map(p => `
                 <div class="platform-card">
                     <h3>${p.name}</h3>
-                    <a href="${p.link}" target="_blank">Launch App</a>
+                    <a href="${p.link}" target="_blank">Visit Site &rarr;</a>
                     <button class="fav-btn ${favs.includes(p.name) ? 'active' : ''}" onclick="toggleFav('${p.name}')">
-                        ${favs.includes(p.name) ? '♥ Favorited' : '♡ Add Favorite'}
+                        ${favs.includes(p.name) ? 'Favorited' : 'Add to Favorites'}
                     </button>
                 </div>
             `).join('');
         }
 
+        function filterPlatforms() {
+            renderPlatforms(document.getElementById('searchBar').value);
+        }
+
         function toggleFav(name) {
             let favs = JSON.parse(localStorage.getItem('covvy_favs')) || [];
-            if (favs.includes(name)) {
-                favs = favs.filter(item => item !== name);
-            } else {
-                favs.push(name);
-            }
+            if (favs.includes(name)) favs = favs.filter(i => i !== name);
+            else favs.push(name);
             localStorage.setItem('covvy_favs', JSON.stringify(favs));
-            renderPlatforms();
+            renderPlatforms(document.getElementById('searchBar').value);
         }
 
         renderPlatforms();
