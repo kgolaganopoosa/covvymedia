@@ -3,61 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Covvy World | Global Directory</title>
-    
-    <!-- Icon: Blue background with white dot -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a73e8%22/%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22white%22/%3E%3C/svg%3E">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"Covvy World","short_name":"Covvy","start_url":"/","display":"standalone","background_color":"%231a73e8","theme_color":"%231a73e8","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a73e8%22/%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22white%22/%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
-    
+    <title>Covvy Media</title>
+    <link rel="manifest" href="manifest.json">
     <style>
-        :root { --bg: #ffffff; --accent: #1a73e8; }
-        body { font-family: sans-serif; margin: 0; }
-        
-        /* Popup Modal */
-        #pwa-popup { display: none; position: fixed; bottom: 20px; left: 5%; width: 90%; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; text-align: center; }
-        .icon-box { width: 50px; height: 50px; background: var(--accent); margin: 0 auto 10px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .dot { width: 15px; height: 15px; background: white; border-radius: 50%; }
-        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; }
+        body { font-family: Arial, sans-serif; margin: 0; background: #f8f9fa; }
+        nav { padding: 20px; background: white; border-bottom: 1px solid #ebebeb; display: flex; align-items: center; }
+        .logo { font-weight: bold; font-size: 24px; color: black; margin-right: 20px; }
+        .hero { text-align: center; padding: 40px 20px; }
+        #list { max-width: 600px; margin: 0 auto; list-style: none; padding: 0; }
+        .item { background: white; margin: 10px 0; padding: 15px; display: flex; align-items: center; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .item img { width: 30px; margin-right: 15px; }
+        .item span { flex-grow: 1; font-weight: bold; }
+        .btn { padding: 8px 12px; cursor: pointer; border: none; border-radius: 4px; background: #e8eaed; }
+        .fav { margin-right: 10px; }
     </style>
 </head>
 <body>
 
-    <nav style="padding: 2rem;"><h2>Covvy World</h2></nav>
+<nav><div class="logo">Covvy Media</div></nav>
 
-    <!-- PWA Installation Popup -->
-    <div id="pwa-popup">
-        <div class="icon-box"><div class="dot"></div></div>
-        <h3>Install Covvy World</h3>
-        <p>Add this to your home screen for quick access.</p>
-        <button onclick="installPWA()">Add to Home Screen</button>
-        <p style="font-size: 12px; margin-top: 10px; color: gray;" onclick="hidePopup()">Maybe later</p>
-    </div>
+<div class="hero">
+    <h1>Your social media platforms, in one place!</h1>
+    <button id="installBtn" style="display:none;">Install App</button>
+</div>
 
-    <script>
-        let deferredPrompt;
-        const popup = document.getElementById('pwa-popup');
+<ul id="list"></ul>
 
-        // Show popup on load if PWA is installable
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            popup.style.display = 'block';
+<script>
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+    
+    const platforms = [
+        { name: "WhatsApp", url: "https://wa.me/27824598656", icon: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" },
+        { name: "Facebook", url: "https://facebook.com", icon: "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" },
+        { name: "Instagram", url: "https://instagram.com", icon: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" },
+        { name: "TikTok", url: "https://tiktok.com", icon: "https://upload.wikimedia.org/wikipedia/commons/3/34/TikTok_logo.svg" },
+        { name: "YouTube", url: "https://youtube.com", icon: "https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" },
+        { name: "X", url: "https://x.com", icon: "https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" },
+        { name: "LinkedIn", url: "https://linkedin.com", icon: "https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" },
+        { name: "Reddit", url: "https://reddit.com", icon: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Reddit_logo.svg" },
+        { name: "Snapchat", url: "https://snapchat.com", icon: "https://upload.wikimedia.org/wikipedia/commons/c/c4/Snapchat_logo.svg" },
+        { name: "Pinterest", url: "https://pinterest.com", icon: "https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" }
+    ];
+
+    // The rest of your existing logic remains exactly the same!
+
+
+
+    const list = document.getElementById('list');
+    function render() {
+        list.innerHTML = '';
+        platforms.forEach((p, index) => {
+            const li = document.createElement('li');
+            li.className = 'item';
+            li.innerHTML = `
+                <button class="btn fav" onclick="toggleFav(${index})">⭐</button>
+                <img src="${p.icon}" alt="${p.name}">
+                <span>${p.name}</span>
+                <a href="${p.url}" target="_blank" class="btn">Launch App</a>
+            `;
+            list.appendChild(li);
         });
+    }
 
-        function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => {
-                    popup.style.display = 'none';
-                });
-            } else {
-                alert("To install: Tap the browser 'Share' or 'Menu' button and select 'Add to Home Screen'.");
-            }
-        }
+    let favorites = [];
+    function toggleFav(i) {
+        const item = platforms.splice(i, 1)[0];
+        favorites.includes(item) ? favorites.splice(favorites.indexOf(item), 1) : favorites.push(item);
+        platforms.unshift(...favorites);
+        render();
+    }
 
-        function hidePopup() { popup.style.display = 'none'; }
-    </script>
+    // PWA Install Logic
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBtn').style.display = 'block';
+    });
+
+    document.getElementById('installBtn').addEventListener('click', () => {
+        deferredPrompt.prompt();
+    });
+
+    render();
+</script>
 </body>
 </html>
