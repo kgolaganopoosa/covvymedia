@@ -62,32 +62,13 @@
         const platforms = [
             { name: "Facebook", link: "https://facebook.com" },
             { name: "Instagram", link: "https://instagram.com" },
-            { name: "WhatsApp", link: "whatsapp://", isMobileApp: true },
+            { name: "WhatsApp", link: "https://www.whatsapp.com" },
             { name: "YouTube", link: "https://youtube.com" },
             { name: "TikTok", link: "https://tiktok.com" },
             { name: "X (Twitter)", link: "https://x.com" },
             { name: "LinkedIn", link: "https://linkedin.com" },
             { name: "Pinterest", link: "https://pinterest.com" }
         ];
-
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        function openPlatform(platform) {
-            if (platform.isMobileApp && isMobileDevice()) {
-                // Try to open native app on mobile
-                window.location.href = platform.link;
-                // Fallback to web version after a delay if app doesn't open
-                setTimeout(() => {
-                    window.location.href = "https://web.whatsapp.com";
-                }, 1500);
-            } else {
-                // Open web version with fallback for WhatsApp on desktop
-                const link = platform.name === "WhatsApp" ? "https://web.whatsapp.com" : platform.link;
-                window.open(link, '_blank');
-            }
-        }
 
         function renderPlatforms(filter = "") {
             const container = document.getElementById('platform-container');
@@ -97,7 +78,7 @@
             container.innerHTML = filtered.map(p => `
                 <div class="platform-card">
                     <h3>${p.name}</h3>
-                    <a href="javascript:void(0);" onclick="openPlatform(${JSON.stringify(p)})">Launch App &rarr;</a>
+                    <a href="${p.link}" target="_blank">Launch App &rarr;</a>
                     <button class="fav-btn ${favs.includes(p.name) ? 'active' : ''}" onclick="toggleFav('${p.name}')">
                         ${favs.includes(p.name) ? 'Favorited' : 'Add to Favorites'}
                     </button>
