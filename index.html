@@ -5,90 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Covvy World | Global Directory</title>
     
-    <!-- Favicon: Blue background with white dot -->
+    <!-- Icon: Blue background with white dot -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a73e8%22/%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22white%22/%3E%3C/svg%3E">
-
+    
     <!-- PWA Manifest -->
     <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"Covvy World","short_name":"Covvy","start_url":"/","display":"standalone","background_color":"%231a73e8","theme_color":"%231a73e8","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a73e8%22/%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22white%22/%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root { --bg: #ffffff; --text-main: #202124; --accent-1: #1a73e8; --border: #dadce0; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; }
+        :root { --bg: #ffffff; --accent: #1a73e8; }
+        body { font-family: sans-serif; margin: 0; }
         
-        nav { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        nav h2 { font-weight: 900; margin: 0; font-size: 1.5rem; }
-        
-        /* Updated Install Button: Always visible or clearly placed */
-        #install-btn { background: var(--accent-1); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-        
-        .hero { padding: 1.5rem 2rem; text-align: center; }
-        .search-container { padding: 1rem; position: sticky; top: 0; background: rgba(255, 255, 255, 0.98); z-index: 100; border-bottom: 1px solid var(--border); }
-        #searchBar { background: #f1f3f4; border: 1px solid transparent; padding: 12px 20px; width: 100%; max-width: 600px; margin: 0 auto; display: block; border-radius: 50px; outline: none; font-size: 16px; }
-        
-        #platform-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 1rem; max-width: 800px; margin: auto; }
-        .platform-card { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-        
-        footer { padding: 2rem; text-align: center; font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 2rem; }
-        
-        @media (max-width: 480px) { #platform-container { grid-template-columns: 1fr; } }
+        /* Popup Modal */
+        #pwa-popup { display: none; position: fixed; bottom: 20px; left: 5%; width: 90%; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; text-align: center; }
+        .icon-box { width: 50px; height: 50px; background: var(--accent); margin: 0 auto 10px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .dot { width: 15px; height: 15px; background: white; border-radius: 50%; }
+        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <h2>Covvy World</h2>
-        <button id="install-btn">Install</button>
-    </nav>
-    
-    <div class="hero">
-        <p><strong>Your world, one tap away.</strong></p>
+    <nav style="padding: 2rem;"><h2>Covvy World</h2></nav>
+
+    <!-- PWA Installation Popup -->
+    <div id="pwa-popup">
+        <div class="icon-box"><div class="dot"></div></div>
+        <h3>Install Covvy World</h3>
+        <p>Add this to your home screen for quick access.</p>
+        <button onclick="installPWA()">Add to Home Screen</button>
+        <p style="font-size: 12px; margin-top: 10px; color: gray;" onclick="hidePopup()">Maybe later</p>
     </div>
-
-    <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Search platforms..." onkeyup="filterPlatforms()">
-    </div>
-
-    <main id="platform-container"></main>
-
-    <footer>
-        <p>&copy; 2026 Covvy World.</p>
-    </footer>
 
     <script>
         let deferredPrompt;
-        const installBtn = document.getElementById('install-btn');
+        const popup = document.getElementById('pwa-popup');
 
-        // Listen for the install prompt
+        // Show popup on load if PWA is installable
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            popup.style.display = 'block';
         });
 
-        installBtn.addEventListener('click', () => {
+        function installPWA() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
+                deferredPrompt.userChoice.then(() => {
+                    popup.style.display = 'none';
                 });
             } else {
-                alert("To install, tap your browser's 'Share' or 'Menu' button and select 'Add to Home Screen'.");
+                alert("To install: Tap the browser 'Share' or 'Menu' button and select 'Add to Home Screen'.");
             }
-        });
-
-        const platforms = [{ name: "Facebook", link: "https://facebook.com", icon: "fa-brands fa-facebook", color: "#1877F2" }, { name: "Instagram", link: "https://instagram.com", icon: "fa-brands fa-instagram", color: "#E1306C" }, { name: "WhatsApp", link: "https://wa.me/27824598656", icon: "fa-brands fa-whatsapp", color: "#25D366" }, { name: "YouTube", link: "https://youtube.com", icon: "fa-brands fa-youtube", color: "#FF0000" }];
-
-        function renderPlatforms(filter = "") {
-            const container = document.getElementById('platform-container');
-            container.innerHTML = platforms.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).map(p => `
-                <a href="${p.link}" target="_blank" class="platform-card">
-                    <div style="color:${p.color}; font-size:20px"><i class="${p.icon}"></i></div>
-                    <div><strong>${p.name}</strong></div>
-                </a>`).join('');
         }
-        function filterPlatforms() { renderPlatforms(document.getElementById('searchBar').value); }
-        renderPlatforms();
+
+        function hidePopup() { popup.style.display = 'none'; }
     </script>
 </body>
 </html>
